@@ -13,7 +13,7 @@ This repo is my final project for the **AI Product Management Certification**. E
 | Module | Deliverables | Done |
 |---|---|---|
 | M1 · Prompting | System prompt, Lovable prototype | Yes |
-| M2 · Strategy | Decision matrix, strategy one-pager | Not started |
+| M2 · Strategy | Decision matrix, strategy one-pager | Matrix done, one-pager in progress |
 | M3 · RAG / AI PRD | AI PRD | Not started |
 | M4 · AI-Native UX | User flow, trust gaps | Not started |
 | M5 · Agentic Workflows | AWSpec, control panel | Not started |
