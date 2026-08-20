@@ -2,7 +2,7 @@
 
 > Juno PM turns RocketShip's flood of escalations, tickets and customer calls into a short, ranked, sourced list of what matters, so a product manager can decide quickly and defend the call afterwards.
 
-_Antje Barth · AI Product Management, Aug 2026 cohort · Module 1_
+_Antje Barth · AI Product Management, Aug 2026 cohort · Modules 1 to 2_
 
 This repo is my final project for the **AI Product Management Certification**. Each module's artefact lives in its own folder; this README is the dashboard and the pitch.
 
@@ -13,7 +13,7 @@ This repo is my final project for the **AI Product Management Certification**. E
 | Module | Deliverables | Done |
 |---|---|---|
 | M1 · Prompting | System prompt, Lovable prototype | Yes |
-| M2 · Strategy | Decision matrix, strategy one-pager | Matrix done, one-pager in progress |
+| M2 · Strategy | Decision matrix, strategy one-pager | Yes |
 | M3 · RAG / AI PRD | AI PRD | Not started |
 | M4 · AI-Native UX | User flow, trust gaps | Not started |
 | M5 · Agentic Workflows | AWSpec, control panel | Not started |
