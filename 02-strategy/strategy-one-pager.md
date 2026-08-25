@@ -8,7 +8,7 @@
 
 ## 2. Target Metrics
 
-**Weekly prioritization time: 2 hours to 30 minutes.** Derived from what the PM's job becomes. Today the two hours are spent assembling a ranking from memory. With Juno drafting it, the work is checking roughly 40 items against their cited sources, at about 30 seconds each to accept or override. That is 20 minutes of review plus discussion, so 30 minutes is the ceiling, not an aspiration.
+**Weekly prioritization time: reducing 2 hours to 30 minutes.** Derived from what the PM's job becomes. Today the two hours are spent assembling a ranking from memory. With Juno drafting it, the work is checking roughly 40 items against their cited sources, at about 30 seconds each to accept or override. That is 20 minutes of review plus discussion, so 30 minutes is the ceiling, not an aspiration.
 
 **Reversals within one week: under 10%.** Derived from the backlog size. Ten percent of 40 items is 4, so the bar says at most four decisions get re-opened per quarter, roughly one a fortnight instead of several a week. Reversals are the honest measure because they count the times the first answer did not survive scrutiny.
 
