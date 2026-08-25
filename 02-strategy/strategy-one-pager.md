@@ -8,11 +8,11 @@ The single bad decision Juno prevents: moving an item up the backlog because som
 
 ## 2. Target Metrics
 
-Average weekly prioritization time falls from 2 hours to 30 minutes.
+**Weekly prioritization time: 2 hours to 30 minutes.** Derived from what the PM's job becomes. Today the two hours are spent assembling a ranking from memory. With Juno drafting it, the work is checking roughly 40 items against their cited sources, at about 30 seconds each to accept or override. That is 20 minutes of review plus discussion, so 30 minutes is the ceiling, not an aspiration.
 
-The number that makes leadership protect this: the share of ranking decisions reversed within one week drops under 10%. Reversals are the honest measure, because they count the times the first answer did not survive contact with scrutiny.
+**Reversals within one week: under 10%.** Derived from the backlog size. Ten percent of 40 items is 4, so the bar says at most four decisions get re-opened per quarter, roughly one a fortnight instead of several a week. Reversals are the honest measure because they count the times the first answer did not survive scrutiny.
 
-Both are readable in the first 30 days from calendar time and the roadmap change log, with no new instrumentation to build.
+Both are readable in 30 days from calendar time and the roadmap change log. No new instrumentation.
 
 ## 3. Autonomy Level
 
@@ -24,7 +24,9 @@ Explicitly avoiding Agent. The job splits cleanly in two. Drafting a ranking is 
 
 Ground with RAG over the RocketShip corpus: `#escalations` and `#support`, the ROCKET Jira project, and the Product workspace in Notion. Every ranked item points at the thread or ticket that justifies it.
 
-Explicitly not taking the fine-tuning shortcut. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so a fine-tuned model would still need the retrieval layer underneath it. It would cost more, ship later, and hide its mistakes where retrieval shows them.
+Explicitly not taking the fine-tuning shortcut. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so a fine-tuned model would still need retrieval underneath. It costs more, ships later, and hides its mistakes where retrieval shows them.
+
+**When a bigger player copies this.** They will, and quickly, because the mechanism is not hard to build. What they cannot copy is the corpus: RocketShip's own escalations, tickets and decisions, plus the record of which past rankings held and which were reversed. A competitor starts that at zero and cannot buy it. The lead is not the retrieval pipeline, it is that ours cites our own arguments and theirs has none yet. It compounds every week we use it and decays if we stop, so the assets to defend are the corpus and the citation rule, not the model choice.
 
 ## 5. Risks & Mitigations
 
