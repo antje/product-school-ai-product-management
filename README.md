@@ -14,8 +14,8 @@ This repo is my final project for the **AI Product Management Certification**. E
 |---|---|---|
 | M1 · Prompting | System prompt, Lovable prototype | Yes |
 | M2 · Strategy | Decision matrix, strategy one-pager | Yes |
-| M3 · RAG / AI PRD | AI PRD | Not started |
-| M4 · AI-Native UX | User flow, trust gaps | Not started |
+| M3 · RAG / AI PRD | AI PRD | Yes |
+| M4 · AI-Native UX | User flow, trust gaps | User flow done, trust gaps pending |
 | M5 · Agentic Workflows | AWSpec, control panel | Not started |
 | M6 · Evals & Guardrails | Eval stack, human rubric | Not started |
 
@@ -35,7 +35,7 @@ This repo is my final project for the **AI Product Management Certification**. E
 - **AI PRD**: [`03-rag-prd/prd.md`](03-rag-prd/prd.md)
 
 ### M4 · AI-Native UX
-- **AI user flow**: [`04-ai-ux/user-flow.md`](04-ai-ux/user-flow.md)
+- **AI user flow**: [`04-ai-ux/user-flow.md`](04-ai-ux/user-flow.md) · [flow diagram](04-ai-ux/user-flow.png)
 - **Trust-gap mitigations**: [`04-ai-ux/trust-gaps.md`](04-ai-ux/trust-gaps.md)
 
 ### M5 · Agentic Workflows

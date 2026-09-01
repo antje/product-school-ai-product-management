@@ -18,6 +18,8 @@
 
 **Choice:** Copilot. Juno drafts the ranked backlog with reasoning and a source behind every line, and the PM approves before anything is published.
 
+The value here is augmentation rather than automation. Juno is not removing the ranking decision, it is removing the blank page the PM currently starts from, which is why a person still approves before anything publishes.
+
 **Explicitly avoiding:** Agent. The job splits cleanly in two. Drafting a ranking is reversible and costs a PM five minutes when it is wrong. Writing dates, moving people, or publishing to the live roadmap is a one-way door, and one bad autonomous call gives every sceptic permanent grounds to dismiss the system. The risk sits in the write action, not in the draft, so that is where the human stays.
 
 ## 4. Data & Model Approach
