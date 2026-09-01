@@ -78,7 +78,7 @@ _Compliance · Safety · Reliability · Reputation._
 ## Repo structure
 
 ```
-juno-pm/
+product-school-ai-product-management/
 ├── README.md                          ← this dashboard + pitch
 ├── 01-prompting/
 │   ├── system-prompt.md               ← M1: Juno's system prompt
