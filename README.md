@@ -2,9 +2,9 @@
 
 > Juno PM turns RocketShip's flood of escalations, tickets and customer calls into a short, ranked, sourced list of what matters, so a product manager can decide quickly and defend the call afterwards.
 
-_Antje Barth · AI Product Management, Aug 2026 cohort · Modules 1 to 2_
+_Antje Barth · AI Product Management, Aug 2026 cohort · Modules 1 to 5_
 
-This repo is my final project for the **AI Product Management Certification**. Each module's artefact lives in its own folder; this README is the dashboard and the pitch.
+This repo is my final project for the **AI Product Management Certification**. Each module's artifact lives in its own folder; this README is the dashboard and the pitch.
 
 ---
 
@@ -16,12 +16,12 @@ This repo is my final project for the **AI Product Management Certification**. E
 | M2 · Strategy | Decision matrix, strategy one-pager | Yes |
 | M3 · RAG / AI PRD | AI PRD | Yes |
 | M4 · AI-Native UX | User flow, trust gaps | User flow done, trust gaps pending |
-| M5 · Agentic Workflows | AWSpec, control panel | Not started |
+| M5 · Agentic Workflows | AWSpec, control panel | Yes |
 | M6 · Evals & Guardrails | Eval stack, human rubric | Not started |
 
 ---
 
-## Module artefacts
+## Module artifacts
 
 ### M1 · Prompting
 - **System prompt**: [`01-prompting/system-prompt.md`](01-prompting/system-prompt.md)
@@ -39,8 +39,8 @@ This repo is my final project for the **AI Product Management Certification**. E
 - **Trust-gap mitigations**: [`04-ai-ux/trust-gaps.md`](04-ai-ux/trust-gaps.md)
 
 ### M5 · Agentic Workflows
-- **Agent Workflow Spec (AWSpec)**: [`05-agentic-workflows/awspec.md`](05-agentic-workflows/awspec.md)
-- **Agent Control Panel**: [`05-agentic-workflows/agent-control-panel.md`](05-agentic-workflows/agent-control-panel.md)
+- **Agent Workflow Spec (AWSpec)**: [`05-agentic-workflows/awspec.md`](05-agentic-workflows/awspec.md) · [workflow diagram](05-agentic-workflows/awspec.png)
+- **Agent Control Panel**: [`05-agentic-workflows/agent-control-panel.md`](05-agentic-workflows/agent-control-panel.md) · [control panel diagram](05-agentic-workflows/agent-control-panel.png)
 
 ### M6 · Evals & Guardrails
 - **Eval stack**: [`06-evals/eval-stack.md`](06-evals/eval-stack.md)
@@ -93,7 +93,9 @@ product-school-ai-product-management/
 │   └── trust-gaps.md                  ← M4: trust-gap mitigations
 ├── 05-agentic-workflows/
 │   ├── awspec.md                      ← M5: Agent Workflow Spec
-│   └── agent-control-panel.md         ← M5: Agent Control Panel
+│   ├── awspec.png                      ← M5: workflow diagram
+│   ├── agent-control-panel.md          ← M5: Agent Control Panel
+│   └── agent-control-panel.png         ← M5: control panel diagram
 └── 06-evals/
     ├── eval-stack.md                  ← M6: layered eval stack
     └── human-rubric.md                ← M6: human evaluation rubric

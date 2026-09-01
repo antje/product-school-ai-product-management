@@ -46,7 +46,7 @@ We are not adding autonomous tool use. Ranking needs Juno to find and order thin
 | 3 | Evidence breadth is visible | Must | Every item shows how many separate customers the evidence covers, without the reader opening anything. |
 | 4 | Refuses rather than guesses | Must | When evidence is thin, Juno returns the refusal wording below and sends the item to the review queue marked unranked. Nothing is dropped silently or given a default priority. |
 | 5 | The tag is the claim, not the score | Must | No test asserts an exact alignment score. Tests assert the priority tag and the presence of a quoted clause. |
-| 6 | Exclusions quoted, not summarised | Should | Where an item is not recommended, the interface shows the strategy's own wording rather than a paraphrase. |
+| 6 | Exclusions quoted, not summarized | Should | Where an item is not recommended, the interface shows the strategy's own wording rather than a paraphrase. |
 
 **Why eight segments.** Juno ranks by how many separate customers are affected, not by how many messages were sent, and it shows that count. Establishing that count takes two or three pieces of evidence per item, so covering the top three items needs about eight. Below six, a case resting on one customer stops looking thin. Above ten, the cost per query climbs without surfacing anyone new.
 
@@ -76,5 +76,5 @@ We are not adding autonomous tool use. Ranking needs Juno to find and order thin
 
 1. Writing to the live roadmap. No dates, no sprint assignment, no status changes. Juno drafts, the PM publishes.
 2. Anything involving headcount or hiring.
-3. Telling customers why something was deprioritised.
+3. Telling customers why something was deprioritized.
 4. Ranking against data Juno cannot see: contracts, revenue figures, private channels and direct messages. It refuses rather than estimating.

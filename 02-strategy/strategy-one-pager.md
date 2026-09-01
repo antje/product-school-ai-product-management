@@ -44,4 +44,4 @@ The value here is augmentation rather than automation. Juno is not removing the 
 
 1. Writing to the live roadmap. No dates, no sprint assignment, no status changes.
 2. Anything involving headcount or hiring.
-3. Customer-facing communication about why something was deprioritised.
+3. Customer-facing communication about why something was deprioritized.

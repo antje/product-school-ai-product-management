@@ -1,10 +1,10 @@
 # AI Solution Decision Matrix · Juno
 
-> Module 2 · Strategy. The technical approach call for Juno's automated prioritization engine.
+> The technical approach call for Juno's automated prioritization engine.
 
 ## The decision
 
-RocketShip's roadmap is ranked by recency and volume, not by evidence. In the weekly review the PM orders around 40 open items from memory and from whatever escalated in Slack most recently. When leadership challenges a rank, the PM cannot produce the reason inside the meeting, so the loudest recent thread wins and the decision is quietly reversed the week after. Module 1 defined how Juno reads a pile of raw input: cite every claim, group by root cause, name what actually broke. Ranking those findings against each other is the next bottleneck.
+RocketShip's roadmap is ranked by recency and volume, not by evidence. In the weekly review the PM orders around 40 open items from memory and from whatever escalated in Slack most recently. When leadership challenges a rank, the PM cannot produce the reason inside the meeting, so the loudest recent thread wins and the decision is quietly reversed the week after. Juno's system prompt already defines how it reads a pile of raw input: cite every claim, group by root cause, name what actually broke. Ranking those findings against each other is the next bottleneck.
 
 Framing the options honestly: all three rent a base model. Nobody at RocketShip is training one, and we have innovation budget with no headcount. So the real decision is **where we spend engineering effort**, and each option is a different answer:
 
@@ -26,13 +26,13 @@ Scored 1 to 5, where 5 is better for the PM: cheap, fast, high control, strong m
 | Buy / API | 5 | 5 | 2 | 1 | 2 | 3.0 |
 | Fine-tune | 2 | 2 | 4 | 2 | 2 | 2.4 |
 
-The axis that decides this is not the one the scores make loudest. Cost and Speed favour Buy / API by a wide margin, and on a normal feature that would settle it. It does not settle this one, because the job Juno is being hired for is defensibility. A ranking the PM cannot trace is worthless in the meeting where it matters, however good it is. That pushes the weight onto Control and Moat.
+The axis that decides this is not the one the scores make loudest. Cost and Speed favor Buy / API by a wide margin, and on a normal feature that would settle it. It does not settle this one, because the job Juno is being hired for is defensibility. A ranking the PM cannot trace is worthless in the meeting where it matters, however good it is. That pushes the weight onto Control and Moat.
 
 **Build** loses on Cost and Speed. Stated assumption, not a quote from engineering: connectors into three systems plus a vector store is weeks of work rather than days, on the existing team with no new headcount. If it turns out to be months, Cost and Speed both drop a point and the gap to Buy narrows, so this is the first estimate to confirm. It takes Control because we decide what is retrievable and what a citation must point at, and Moat because the corpus and the citation rule compound while a model does not. Risk is low for the same reason. Grounded output is checkable, so a bad rank is visible in seconds rather than discovered a week later.
 
-**Buy / API** is genuinely tempting on a budget with no headcount. It fails on provenance. An ungrounded model ranking a backlog produces confident output with nothing behind it, which is the loudest-voice problem again in better prose. Module 1 already showed us this exact failure: the prototype wrote a fluent brief that never named what was broken, and it was convincing precisely because it was fluent.
+**Buy / API** is genuinely tempting on a budget with no headcount. It fails on provenance. An ungrounded model ranking a backlog produces confident output with nothing behind it, which is the loudest-voice problem again in better prose. The first prototype showed this exact failure: it wrote a fluent brief that never named what was broken, and it was convincing precisely because it was fluent.
 
-**Fine-tune** scores worst. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so it would still need the retrieval layer underneath. It is the Build cost plus a labelling programme, and it hides its mistakes instead of showing them.
+**Fine-tune** scores worst. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so it would still need the retrieval layer underneath. It is the Build cost plus a labeling programme, and it hides its mistakes instead of showing them.
 
 ## Recommendation
 

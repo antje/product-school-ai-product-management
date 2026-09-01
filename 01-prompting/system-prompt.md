@@ -1,6 +1,6 @@
 # System Prompt · Juno
 
-> Module 1 · Prompting. Juno's production system prompt, authored with the M1 · System Prompt Configurator.
+> Juno's production system prompt. The job description the model runs against on every request.
 
 ## Role & objective
 

@@ -1,8 +1,8 @@
 # AI-Native User Flow · Juno
 
-> Juno's risk-prioritisation flow as an iceberg. Seven nodes, each marked tip (the user sees it) or underwater (it runs unseen).
+> Juno's risk-prioritization flow as an iceberg. Seven nodes, each marked tip (the user sees it) or underwater (it runs unseen).
 
-![Juno risk-prioritisation flow: surface, handshake and underwater layers](user-flow.png)
+![Juno risk-prioritization flow: surface, handshake and underwater layers](user-flow.png)
 
 ## Entry point
 
@@ -44,7 +44,7 @@ Routing turns on whether a clause matches, never on a numeric confidence cutoff.
 
 - Slack: a threaded reply in `#escalations` carrying the ranked shortlist.
 - Jira: a `juno-priority` field update plus a comment quoting the clause, on each matched ROCKET ticket.
-- Notion: a row appended to the current week's prioritisation page in the Product workspace.
+- Notion: a row appended to the current week's prioritization page in the Product workspace.
 
 Nothing lands until a person approves it. Juno drafts and the PM decides, so Act stages the work and stops.
 
@@ -85,7 +85,7 @@ Juno refuses. Where evidence is thin, it says so rather than producing a rank.
 
 **Kill switch**
 
-Reject on any item, or Reject All on the shortlist. Rejection stops the staged writes before anything reaches Jira or Notion, so a bad ranking costs one click and leaves no trace in the systems of record. The PM can also mute Juno on a specific thread when a conversation is not about prioritisation at all.
+Reject on any item, or Reject All on the shortlist. Rejection stops the staged writes before anything reaches Jira or Notion, so a bad ranking costs one click and leaves no trace in the systems of record. The PM can also mute Juno on a specific thread when a conversation is not about prioritization at all.
 
 **Training signal**
 

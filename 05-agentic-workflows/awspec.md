@@ -6,13 +6,15 @@
 
 ## Goal
 
-Triage a forming P0 in `#escalations` into a ranked, source-cited shortlist the PM can defend in the thread, so risk gets caught before it becomes an argument nobody can settle. The value frame is risk mitigation first and cost reduction second: the weekly prioritisation review drops from two hours to thirty minutes as a side effect of the ranking already being built.
+Triage a forming P0 in `#escalations` into a ranked, source-cited shortlist the PM can defend in the thread, so risk gets caught before it becomes an argument nobody can settle. The value frame is risk mitigation first and cost reduction second: the weekly prioritization review drops from two hours to thirty minutes as a side effect of the ranking already being built.
 
 **Primary actor:** the agent, with the PM in the loop.
 
 Juno pilots the triage. It decides what to retrieve, how to score, and what to draft. It does not pilot the outcome. Every write is staged and executes only on approval.
 
 This is the highest autonomy level appropriate here. An agent that plans, calls tools and iterates fits the job. One that operates unsupervised over long horizons does not, because a wrong priority published into Jira is not a mistake anyone catches quickly and it is the kind that ends trust in the system permanently.
+
+The technical approach call behind Juno ruled out going agentic, on the grounds that ranking needs retrieval and ordering rather than tool calls, and that every tool Juno could call is a tool that can write. That reasoning still holds for unsupervised action, and this spec does not overturn it. What it narrows is the second half: the tools here compose writes and never execute them, so the objection to tool-calling turns out to be an objection to tool-calling without a gate. This is the gated version.
 
 ## Trigger
 
@@ -21,7 +23,7 @@ A thread in `#escalations` crosses one of two thresholds:
 - **Severity:** the thread is tagged P0 or P1.
 - **Velocity:** the thread passes five messages within ten minutes.
 
-Either one fires a run. A single message never fires anything.
+Either one fires a run. A single message never fires anything, and a thread fires at most once an hour, so one loud incident cannot re-trigger the same triage every few minutes.
 
 Two thresholds rather than one because severity tags are unreliable. Real incidents get argued about before anyone remembers to tag them, so the velocity bar catches what the tag misses.
 
@@ -35,6 +37,7 @@ Five messages in ten minutes is where an ordinary question stops looking like an
 - The strategy document, current version, loaded whole, with the time it was last indexed.
 - The indexed corpus over Slack, tickets and the product workspace, scoped to the requesting team and to the last 90 days. A priority argued on evidence older than a quarter is arguing about a product that has already moved on.
 - The account map, so a participant or a ticket can be resolved to the customer it belongs to. Without it, counting separate customers is guesswork.
+- The model itself: one rented frontier tier, pinned in the deployment config rather than named inside the prompt, so the model can be changed without anyone editing Juno's behavior.
 
 If the strategy document fails to load, the run does not start. Every priority has to quote a clause, so a ranking produced without the document would be an ordering with nothing behind it, and it would look exactly like a sourced one.
 
@@ -46,7 +49,7 @@ Planner-Executor becomes the right choice if this ever runs across every escalat
 
 | Step | Action | Tool | Guardrail |
 |---|---|---|---|
-| 1 | Read the thread, its participants, linked ticket keys and the customer accounts named in it | `slack.read_thread` | Read-only, and only in the two channels named below |
+| 1 | Read the thread, its participants, linked ticket keys and the customer accounts named in it | `slack.read_thread` | Read-only, and only in `#escalations` and `#support` |
 | 2 | Load the strategy document whole and retrieve the top 8 corpus segments per candidate item, then rerank strategy first | `strategy.load`, `corpus.retrieve` | Every chunk returns a source and a timestamp, or it cannot be cited |
 | 3 | Score each item against the strategy and count separate customers affected | `accounts.count` | Message volume is ignored, so one account raising an issue twelve times counts once |
 | 4 | Draft the shortlist: priority tag, quoted clause, evidence count per item | model only | No item is drafted without a clause to quote |
@@ -76,14 +79,14 @@ jira.stage_priority  → {staged_id, issue_key, field, value}
 notion.stage_row     → {staged_id, page_id, row}
 ```
 
-Every retrieval returns a source and a timestamp, not just text. A chunk without a source cannot be cited, and the citation is the whole product.
+Every retrieved chunk carries a source and a timestamp, not just text. A chunk without a source cannot be cited, and the citation is the whole product.
 
-Eight segments per item, because ranking turns on how many separate customers are affected. Establishing that count takes two or three segments per item, and covering the top three items needs about eight. Fewer than six and a case resting on a single customer stops looking thin. The strategy document is loaded whole rather than retrieved, because its exclusion list only works if all of it is present.
+Eight segments per item, because ranking turns on how many separate customers are affected. Establishing that count takes two or three segments per item, and covering the top three items needs about eight. Below six, there is not enough retrieved to show how narrow a case is, so an item resting on one customer reads as solidly as one resting on five. Above ten, the cost per query climbs without surfacing anyone new. The strategy document is loaded whole rather than retrieved, because its exclusion list only works if all of it is present.
 
 **Memory, in or out of scope**
 
 - **Episodic:** in scope. Tool results and intermediate reasoning within one run: which segments came back, what scored where, what was routed to escalation. Lifetime ends with the run, so a bad retrieval cannot poison the next thread.
-- **Semantic:** in scope, but only for the ranking rules. Three of them, re-read every loop: cite every claim, group by root cause, rank by separate customers rather than message volume.
+- **Semantic:** in scope, but only for the ranking rules. Three of them, re-read every loop: cite every claim, group by root cause, rank by separate customers rather than message volume. The rules carry a version, and the version that produced a shortlist is stamped in its log, so any ranking can be read back against the rules in force when it was made.
 - **Semantic, out of scope on purpose:** Juno does not keep customer contract terms, revenue figures, or any learned view of which accounts matter. Those are the facts that quietly turn into bias over a few weeks. The ranking is supposed to come from the strategy document, not from an opinion the agent has built up about who complains loudest.
 - **Working:** in scope. The current thread, the accounts named in it, the strategy document held whole, and the retrieved segments for the item being scored. Context only, for the length of the run.
 - **External:** the Slack thread API, the strategy document, and the corpus index over Slack, tickets and the product workspace. All read. The three write tools stage rather than execute.
@@ -92,7 +95,7 @@ Eight segments per item, because ranking turns on how many separate customers ar
 
 Juno can **read** `#escalations` and `#support`, the strategy document, the ROCKET ticket project and the Product workspace, all scoped to the requesting team.
 
-Juno can **stage writes** to one thread reply, the `juno-priority` field plus one comment on a matched ticket, and one row on the current week's prioritisation page.
+Juno can **stage writes** to one thread reply, the `juno-priority` field plus one comment on a matched ticket, and one row on the current week's prioritization page.
 
 Juno **cannot** execute any write without approval, touch ticket fields other than `juno-priority`, change dates or sprint assignment or status, read or write direct messages, private channels, contracts or revenue figures, or post to any channel other than the thread that triggered the run.
 
@@ -124,6 +127,10 @@ Two errors rather than one, because a single failure is usually a timeout worth 
 
 **Timeout:** 45 seconds wall clock. This is a different budget from the four second retrieval target committed in the requirements. That figure is the p95 for a single retrieval call; this one covers several calls plus reasoning. Conflating them would either break the retrieval spec or make the loop impossible.
 
+**What the thread sees while a run is in flight.** Nothing. The 45 seconds are silent on purpose, because a placeholder posted into a thread where people are already arguing adds noise to the thing it is trying to settle.
+
+If the thread gains more than ten new messages during a run, the run is discarded rather than surfaced. A shortlist built on the first half of an argument will be read as a summary of all of it, and being confidently out of date is the failure this whole design is trying to avoid.
+
 **Fails safe by** staging every write rather than executing it. A wrong ranking costs one rejection and leaves no trace in the systems of record. If a tool fails, the run stops and says so rather than substituting a guess, because a plausible rank built on a failed retrieval is indistinguishable from a sourced one once it is in the list.
 
 **Named failure modes and their handling**
@@ -134,11 +141,12 @@ Two errors rather than one, because a single failure is usually a timeout worth 
 | Memory poisoning | Episodic memory dies with the run. Semantic memory holds rules, never facts about accounts |
 | Runaway loop | Six tool calls, 45 second wall clock, whichever comes first |
 | Silent handoff failure | The three handoff conditions are countable, so a missed escalation is visible in the log rather than a judgment call |
-| Drift across sessions | Nothing customer-specific persists between runs, so there is nothing to drift |
+| Drift across sessions | Nothing customer-specific persists between runs. The ranking rules that do persist are versioned, and the version is stamped on every shortlist |
+| Provider outage or rate limit | The run fails closed. No quiet downgrade to a smaller model, because a weaker ranking cites the same clauses and is wrong more often, which the output cannot show |
 
 **Eval hooks, what every run logs**
 
-Per run: the run id, which trigger fired and whether it was the tag or the velocity threshold, the thread id, how many tool calls were used, the wall clock, and how the run ended. Ended one of three ways: drafted, refused, or handed back, and if handed back, which of the three conditions caused it.
+Per run: the run id, which trigger fired and whether it was the tag or the velocity threshold, the thread id, how many tool calls were used, and the wall clock. A run ends one of three ways, and the log says which: drafted, refused, or handed back. If it handed back, the log names which of the three conditions caused it.
 
 Per drafted item: the priority tag, the source ids retrieved, the strategy clause quoted, and the count of separate customers affected.
 
@@ -150,12 +158,23 @@ The scores are deliberately not the thing being logged as a result. Identical in
 
 ## Self-review
 
-- [x] Goal is one sentence and names the value frame: risk mitigation, then cost.
-- [x] Trigger is precise and testable: a P0/P1 tag or five messages in ten minutes.
-- [x] Pattern is chosen with a defensible reason, and the alternative is named with the condition that would justify it.
-- [x] Stop conditions cover success, failure, escalation, a loop ceiling and a timeout.
-- [x] Every memory type is named, including what is deliberately out of scope.
-- [x] Every tool lists its scope and returns a named schema.
+- [x] Goal is one sentence and names the value frame.
+- [x] Trigger is a precise, testable condition.
+- [x] Pattern is chosen with a defensible reason.
+- [x] At least 3 stop conditions, including escalation.
+- [x] Each memory type named (in or out).
+- [x] Every tool lists scope (read-only vs write) and a schema.
+- [x] Read/write boundaries match the AI PRD.
+
+**Also checked**
+
+- [x] The value frame is ordered rather than listed: risk mitigation first, cost reduction second, with the time saving derived from the work it replaces.
+- [x] Both trigger thresholds are derived, and the reason for two rather than one is stated.
+- [x] The rejected pattern is named along with the condition that would make it the right choice.
+- [x] Stop conditions go past the three required: success, failure, escalation, a loop ceiling and a timeout, each with the reason for its number.
+- [x] Semantic memory names what is deliberately out of scope, not only what is kept, and the rules it does keep are versioned.
 - [x] Inputs name the context a run requires, and what happens when a required input is missing.
-- [x] Read and write boundaries match the access control already committed in the requirements.
 - [x] Eval hooks name what every run logs, and why scores are not among the logged results.
+- [x] The failure table covers all five named failure modes plus provider outage, and the model tier is named as an input rather than buried in the prompt.
+- [x] The latency budget has a user-facing contract: what the thread sees during a run, and what happens when the thread moves on mid-run.
+- [x] The trade-off being accepted is stated outright rather than left implicit.
