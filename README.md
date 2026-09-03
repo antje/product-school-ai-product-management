@@ -1,3 +1,5 @@
+![Juno PM](juno-pm-cover.jpg)
+
 # Juno PM · AI Copilot for RocketShip's Product Org
 
 > Juno PM turns RocketShip's flood of escalations, tickets and customer calls into a short, ranked, sourced list of what matters, so a product manager can decide quickly and defend the call afterwards.
@@ -104,6 +106,7 @@ This repo is my final project for the **AI Product Management Certification**. E
 ```
 product-school-ai-product-management/
 ├── README.md                          ← this dashboard + pitch
+├── juno-pm-cover.jpg                  ← title image
 ├── 01-prompting/
 │   ├── system-prompt.md               ← M1: Juno's system prompt
 │   └── lovable-prototype.md           ← M1: prototype link + debrief
