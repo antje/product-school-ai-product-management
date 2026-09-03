@@ -10,9 +10,9 @@ Triage a forming P0 in `#escalations` into a ranked, source-cited shortlist the 
 
 **Primary actor:** the agent, with the PM in the loop.
 
-Juno pilots the triage. It decides what to retrieve, how to score, and what to draft. It does not pilot the outcome. Every write is staged and executes only on approval.
+Juno has all four traits of agency: a goal it pursues, tools it calls, memory scoped to the run, and iteration on what it observes. It pilots the triage. It decides what to retrieve, how to score, and what to draft. It does not pilot the outcome. Every write is staged and executes only on approval.
 
-This is the highest autonomy level appropriate here. An agent that plans, calls tools and iterates fits the job. One that operates unsupervised over long horizons does not, because a wrong priority published into Jira is not a mistake anyone catches quickly and it is the kind that ends trust in the system permanently.
+On the agent spectrum this is **Agent**, one level below Autonomous Agent, and it is the highest level appropriate here. An agent that plans, calls tools and iterates fits the job. One that operates unsupervised over long horizons does not, because a wrong priority published into Jira is not a mistake anyone catches quickly and it is the kind that ends trust in the system permanently.
 
 The technical approach call behind Juno ruled out going agentic, on the grounds that ranking needs retrieval and ordering rather than tool calls, and that every tool Juno could call is a tool that can write. That reasoning still holds for unsupervised action, and this spec does not overturn it. What it narrows is the second half: the tools here compose writes and never execute them, so the objection to tool-calling turns out to be an objection to tool-calling without a gate. This is the gated version.
 
@@ -45,7 +45,7 @@ If the strategy document fails to load, the run does not start. Every priority h
 
 Reason, act, observe, loop. Retrieval here is iterative by nature. Juno cannot know it needs a second retrieval until the first one comes back holding a single source, or two sources that disagree. A planner would have to commit to a retrieval plan before seeing any evidence, and settling evidence is the entire job.
 
-Planner-Executor becomes the right choice if this ever runs across every escalation channel at once, because the work then splits into branches that genuinely do not depend on each other. That is not this spec.
+Planner-Executor becomes the right choice if this ever runs across every escalation channel at once, because the work then splits into branches that do not depend on each other. That is not this spec.
 
 | Step | Action | Tool | Guardrail |
 |---|---|---|---|
@@ -53,7 +53,7 @@ Planner-Executor becomes the right choice if this ever runs across every escalat
 | 2 | Load the strategy document whole and retrieve the top 8 corpus segments per candidate item, then rerank strategy first | `strategy.load`, `corpus.retrieve` | Every chunk returns a source and a timestamp, or it cannot be cited |
 | 3 | Score each item against the strategy and count separate customers affected | `accounts.count` | Message volume is ignored, so one account raising an issue twelve times counts once |
 | 4 | Draft the shortlist: priority tag, quoted clause, evidence count per item | model only | No item is drafted without a clause to quote |
-| 4b | Verify every quoted clause against the loaded strategy document before staging | `strategy.load` result, string match | An item whose clause does not appear verbatim is dropped from the shortlist and logged. If it was the top item, the run refuses rather than reordering around it |
+| 4b | Verify every quoted clause against the loaded strategy document before staging | `strategy.load` result, string match | An item whose clause does not appear verbatim is dropped from the shortlist and logged. If it was the top item, the run refuses rather than reordering around it, so one bad citation cannot cascade into a promoted second item |
 | 5 | Stage three writes and request approval | `slack.stage_reply`, `jira.stage_priority`, `notion.stage_row` | Staged only. Nothing executes without approval |
 
 **Tool inventory**
@@ -80,7 +80,7 @@ jira.stage_priority  → {staged_id, issue_key, field, value}
 notion.stage_row     → {staged_id, page_id, row}
 ```
 
-Every retrieved chunk carries a source and a timestamp, not just text. A chunk without a source cannot be cited, and the citation is the whole product.
+Every retrieved chunk carries a source and a timestamp, not just text. A chunk without a source cannot be cited, and the citation is the product.
 
 Eight segments per item, because ranking turns on how many separate customers are affected. Establishing that count takes two or three segments per item, and covering the top three items needs about eight. Below six, there is not enough retrieved to show how narrow a case is, so an item resting on one customer reads as solidly as one resting on five. Above ten, the cost per query climbs without surfacing anyone new. The strategy document is loaded whole rather than retrieved, because its exclusion list only works if all of it is present.
 
@@ -88,7 +88,7 @@ Eight segments per item, because ranking turns on how many separate customers ar
 
 - **Episodic:** in scope. Tool results and intermediate reasoning within one run: which segments came back, what scored where, what was routed to escalation. Lifetime ends with the run, so a bad retrieval cannot poison the next thread.
 - **Semantic:** in scope, but only for the ranking rules. Three of them, re-read every loop: cite every claim, group by root cause, rank by separate customers rather than message volume. The rules carry a version, and the version that produced a shortlist is stamped in its log, so any ranking can be read back against the rules in force when it was made.
-- **Semantic, out of scope on purpose:** Juno does not keep customer contract terms, revenue figures, or any learned view of which accounts matter. Those are the facts that quietly turn into bias over a few weeks. The ranking is supposed to come from the strategy document, not from an opinion the agent has built up about who complains loudest.
+- **Semantic, out of scope:** Juno does not keep customer contract terms, revenue figures, or any learned view of which accounts matter. Those are the facts that quietly turn into bias over a few weeks. The ranking is supposed to come from the strategy document, not from an opinion the agent has built up about who complains loudest.
 - **Working:** in scope. The current thread, the accounts named in it, the strategy document held whole, and the retrieved segments for the item being scored. Context only, for the length of the run.
 - **External:** the Slack thread API, the strategy document, and the corpus index over Slack, tickets and the product workspace. All read. The three write tools stage rather than execute.
 
@@ -128,9 +128,9 @@ Two errors rather than one, because a single failure is usually a timeout worth 
 
 **Timeout:** 45 seconds wall clock. This is a different budget from the four second retrieval target committed in the requirements. That figure is the p95 for a single retrieval call; this one covers several calls plus reasoning. Conflating them would either break the retrieval spec or make the loop impossible.
 
-**What the thread sees while a run is in flight.** Nothing. The 45 seconds are silent on purpose, because a placeholder posted into a thread where people are already arguing adds noise to the thing it is trying to settle.
+**What the thread sees while a run is in flight.** One threaded reply, posted within a second of the trigger and edited in place as each step finishes: "Reading this thread. Strategy last read 2 hours ago", then "Checking against the Q3 strategy", then "Counting affected customers". Each edit corresponds to real work completing, never a timer, and the same message becomes the shortlist when the run ends. One message rather than a sequence, because a bot that posts four times turns the thread it is helping into one nobody can read. The strategy timestamp comes first: it tells the thread which version of the priorities is about to be applied before any rank appears.
 
-If the thread gains more than ten new messages during a run, the run is discarded rather than surfaced. A shortlist built on the first half of an argument will be read as a summary of all of it, and being confidently out of date is the failure this whole design is trying to avoid.
+If the thread gains more than ten new messages during a run, the run is discarded and the status message is replaced with one line saying so. A shortlist built on the first half of an argument will be read as a summary of all of it, and being confidently out of date is the failure this whole design is trying to avoid.
 
 **Clause verification runs before staging, not only in review.** The strategy document is already loaded whole, so checking that each quoted clause appears in it verbatim is a string match with no extra call and no model. An item that fails is dropped and logged; if the failing item was ranked top, the run refuses rather than promoting the second item, because the ranking that produced it is no longer trustworthy.
 
@@ -157,7 +157,7 @@ Per drafted item: the priority tag, the source ids retrieved, the strategy claus
 
 After approval: what the PM did with each item. Approved as drafted, edited, or rejected, and the edited value where it changed.
 
-The scores are deliberately not the thing being logged as a result. Identical inputs move them a few points between runs, so a log of scores would measure noise. The tag, the cited clause and the account count hold still, which makes them checkable. The PM's edit is the only ground truth this product gets, and it arrives for free every time someone approves a shortlist, so it is worth capturing from the first run rather than fitted later.
+The scores are not logged as a result. Identical inputs move them a few points between runs, so a log of scores would measure noise. The tag, the cited clause and the account count hold still, which makes them checkable. The PM's edit is the only ground truth this product gets, and it arrives for free every time someone approves a shortlist, so capture it from the first run rather than fitting it later.
 
 **The trade-off being made:** accuracy bought at the cost of latency. Loading the strategy whole, retrieving eight segments, reranking, then counting distinct customers all add time. A triage that takes 45 seconds and cites its sources is worth more than one that answers in five and cannot be defended, because the whole point is surviving the argument in the thread.
 
@@ -177,7 +177,7 @@ The scores are deliberately not the thing being logged as a result. Identical in
 - [x] Both trigger thresholds are derived, and the reason for two rather than one is stated.
 - [x] The rejected pattern is named along with the condition that would make it the right choice.
 - [x] Stop conditions go past the three required: success, failure, escalation, a loop ceiling and a timeout, each with the reason for its number.
-- [x] Semantic memory names what is deliberately out of scope, not only what is kept, and the rules it does keep are versioned.
+- [x] Semantic memory names what is out of scope, not only what is kept, and the rules it does keep are versioned.
 - [x] Inputs name the context a run requires, and what happens when a required input is missing.
 - [x] Eval hooks name what every run logs, and why scores are not among the logged results.
 - [x] The failure table covers all five named failure modes plus provider outage, and the model tier is named as an input rather than buried in the prompt.

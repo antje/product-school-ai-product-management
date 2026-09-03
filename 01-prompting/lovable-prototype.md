@@ -81,4 +81,4 @@ I pasted the Sarah interview from the lab into the left column and pressed Proce
 
 ## The takeaway
 
-The prototype looks convincing and gets the shape of the answer right, which is exactly what makes it dangerous. A stakeholder skimming the brief would walk away without learning that CSV export is broken. Nothing in the interface caused that. The failure is in the instructions, so that is where the fix has to go.
+This is the Beautiful Liar pattern. The prototype looks convincing and gets the shape of the answer right, which is what makes it dangerous. A stakeholder skimming the brief would walk away without learning that CSV export is broken. Nothing in the interface caused that. The failure is in the instructions, so that is where the fix has to go.

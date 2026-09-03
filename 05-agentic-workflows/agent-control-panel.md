@@ -12,7 +12,7 @@ Four levers a PM specifies and engineering implements, plus four rules of engage
 
 **Juno cannot** execute any of those writes, close or resolve a thread, message a customer, change a ticket's dates, status or sprint, or post anywhere other than the thread that triggered the run.
 
-Running unsupervised over long stretches is out of scope. A wrong priority written into the ticket system is not a mistake anyone catches quickly. It sits there looking official, and that is the kind of error that ends trust in the tool for good.
+Running unsupervised over long stretches is out of scope. A wrong priority written into the ticket system is not a mistake anyone catches quickly. It sits there looking official, and that kind of error ends trust in the tool.
 
 **Which steps run in which mode**
 
@@ -23,7 +23,7 @@ Running unsupervised over long stretches is out of scope. A wrong priority writt
 | Publish the thread reply, the ticket field, the prioritization row | AI plus a human checkpoint | These are the writes. Once a priority sits in the ticket system it looks official, and nobody re-checks it |
 | Any thread touching contracts, legal, security or a customer's commercial terms | Human alone | Juno cannot see the data that would settle these, and being confidently wrong costs more than being slow |
 
-The line between rows two and three is the whole product. Juno owns the reasoning up to the moment something becomes real, and never past it.
+Juno owns the reasoning up to the moment something becomes real, and never past it.
 
 ## Controls
 
@@ -31,24 +31,22 @@ The line between rows two and three is the whole product. Juno owns the reasonin
 
 Six calls, because a triage still circling after six has hit a dead end rather than a hard problem, and more calls only spend tokens on the same gap. Forty-five seconds, because that is the budget for a whole loop: several tool calls plus the reasoning between them. It is a different number from the four second target that applies to one retrieval call, and the two are not interchangeable. Two errors rather than one, because a single failure is usually a timeout worth one retry, while two in the same run means the tool or the query is wrong.
 
-**Manual override.** The three conditions above are the agent giving up on itself. A person needs switches too, and they belong to the PM who owns `#escalations`, with workspace admins as the second holder.
+**Manual override.** The three conditions above are the agent giving up on itself. A person needs switches too, and they belong to the PM who owns `#escalations`, with workspace admins as the second holder. The holder is named so that stopping Juno is never left to whoever happens to notice.
 
 - **Stop this run.** Cancels a run in flight. Staged drafts are discarded, nothing publishes, and the thread is left exactly as Juno found it. The trace stays in the log so the run can be read back.
 - **Disable Juno**, for one channel or for the workspace. Any run in flight finishes its current tool call and stops before staging. New triggers do not fire until someone re-enables it, and the log records who switched it off and why.
-
-A switch nobody can find is not a switch, which is why this names the holder rather than leaving it to whoever notices first.
 
 **Rate and cost caps.** One run per thread per hour, and a hard ceiling of 6,000 tokens of retrieved context per query.
 
 The rate cap matters more than it looks. A busy thread keeps crossing the velocity threshold, and without a cap one loud incident would re-fire Juno every few minutes and pay for the same triage over and over. The six call ceiling bounds what any single run can cost.
 
-What that adds up to. `#escalations` produces roughly five threads a day that clear the trigger, so about 110 runs a month across 22 working days. A run loads the strategy document whole, around 5,000 tokens, and makes at most six retrievals at the ceiling, so the worst case is roughly 41,000 tokens in and 2,000 out. That puts the ceiling near 4.7 million tokens a month, with the typical run well under half of it because most triages settle in three or four calls.
+What that adds up to. `#escalations` produces roughly five threads a day that clear the trigger, so about 110 runs a month across 22 working days. Five a day is the one assumption in this arithmetic that is an estimate rather than a committed figure, so it is the first number to confirm from the channel history before the cost line is quoted anywhere. A run loads the strategy document whole, around 5,000 tokens, and makes at most six retrievals at the ceiling, so the worst case is roughly 41,000 tokens in and 2,000 out. That puts the ceiling near 4.7 million tokens a month, with the typical run well under half of it because most triages settle in three or four calls.
 
-The reason to write it as tokens a month rather than tokens a query is that this is the number that gets held against the two hours a week Juno is meant to give back. A cost cap nobody can price is not a cap, it is a setting.
+The reason to write it as tokens a month rather than tokens a query is that this is the number that gets held against the two hours a week Juno is meant to give back.
 
 **Model and provider failure.** Juno runs on one rented frontier tier, pinned in the deployment config rather than named inside the prompt, so the model can be changed without editing behavior. If the provider is down, rate-limits mid-run, or errors twice, the run fails closed.
 
-**Juno cannot** quietly fall back to a smaller or cheaper model to keep a run alive. A weaker model cites the same clauses in the same format and is wrong more often, so the failure is invisible in the output. That is the half-sourced rank problem with a different cause, and the PM has no way to catch it by reading.
+**Juno cannot** fall back to a smaller or cheaper model to keep a run alive. A weaker model cites the same clauses in the same format and is wrong more often, so the failure is invisible in the output. That is the half-sourced rank problem with a different cause, and the PM has no way to catch it by reading.
 
 **Lever 2 · Structured tool outputs.** Every retrieved chunk carries a source, a timestamp and a relevance score. Every tool returns a named schema.
 
@@ -91,7 +89,7 @@ The relevance score in the retrieval schema orders results. It never gates them.
 
 **Watching the checkpoint itself**
 
-Every control in this document ends in the same place: the PM approves. That makes approval the single point of failure, and approval is the part that degrades quietly. After a few weeks of Juno being mostly right, a person starts clicking through without reading, and the checkpoint still looks like a control on the page while doing nothing at all.
+Every control in this document ends with the PM approving. That makes approval the single point of failure, and it is the part that degrades without anyone noticing. After a few weeks of Juno being mostly right, a person starts clicking through without reading, and the checkpoint still looks like a control on the page while doing nothing at all.
 
 Both signals already come out of the run log, so watching this costs nothing to build.
 
@@ -104,7 +102,7 @@ Both numbers come from the work rather than from a feel for it. Four items, each
 
 Ten percent comes from what the product already promises. The target is fewer than one in ten ranked items reversed after the fact, which means the ranking is not expected to be right every time. An edit rate at approval well below that is not a sign that Juno got better. It is a sign that the errors are getting past the check instead of being caught by it.
 
-Neither number blocks anything on its own. They are how a PM finds out that the autonomy level has moved up a notch without anyone deciding it should, which is the thing this document exists to prevent.
+Neither number blocks anything on its own. They are how a PM finds out that the autonomy level has moved up a notch without anyone deciding it should, which is what this document exists to prevent.
 
 **Rule 3 · Checkpoints**
 
@@ -120,7 +118,7 @@ The three standing rules that ride with it, re-read on the same loop: cite the s
 
 That sentence is the goal from the workflow spec, word for word. Both documents have to say the same thing or the operator and the builder are running different products.
 
-It is re-read on every loop for a simple reason. An agent six steps deep has a context window full of retrieved text and has lost sight of the question. Re-reading the goal each time is what keeps step six answering the same question as step one.
+It is re-read on every loop because an agent six steps deep has a context window full of retrieved text and has lost sight of the question. Re-reading the goal each time is what keeps step six answering the same question as step one.
 
 ## Permissions
 
@@ -132,7 +130,7 @@ It is re-read on every loop for a simple reason. An agent six steps deep has a c
 
 **Juno cannot** execute a write without approval; touch any ticket field other than `juno-priority`; change dates, status or sprint assignment; read or write direct messages, private channels, contracts or revenue figures; post outside the thread that triggered the run; or act on data belonging to another team.
 
-These are enforced when the index is built rather than filtered afterwards, so a document Juno should not see never enters the corpus in the first place. Filtering after retrieval would mean the excluded data had already been read, which is the failure the rule exists to prevent.
+These are enforced when the index is built rather than filtered afterwards, so a document Juno should not see never enters the corpus. Filtering after retrieval would mean the excluded data had already been read, which is the failure the rule exists to prevent.
 
 **Staged writes expire after four hours.** A batch that is not approved inside four hours is discarded, and the PM is told why. Approving a stale batch would publish a ranking computed against a thread that has since moved, and it would carry the authority of the moment it was approved rather than the moment it was built. Four hours, because a P0 thread nobody has looked at in half a working day has either resolved itself or escalated past Juno.
 
@@ -163,6 +161,6 @@ The three standing rules are the product. Editing one changes what Juno believes
 - [x] Stop conditions include a human override, with the holder named rather than left to whoever notices.
 - [x] Every step is placed in a decision mode, and the mode is justified.
 - [x] Cost is capped in money terms, derived from run volume, not only in tokens per query.
-- [x] The model tier is named, and provider failure fails closed rather than downgrading quietly.
+- [x] The model tier is named, and provider failure fails closed rather than downgrading.
 - [x] The health of the human checkpoint is itself monitored, with two thresholds and an action for each.
 - [x] Staged writes expire, and the ranking rules are versioned with a named owner.

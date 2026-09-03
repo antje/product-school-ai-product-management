@@ -15,7 +15,7 @@
 - **Candidate item:** one distinct root cause. Several messages describing the same failure are one item carrying several signals, not several items.
 - **A run:** one trigger firing through to one outcome, either a drafted shortlist or a handoff.
 
-**What is deliberately not scored: the numeric score Juno produces.** Identical inputs move it a few points between runs, so grading it would measure noise and graders would disagree about a number neither of them can reproduce. Graders score the priority tag, the quoted clause and the evidence count, all of which hold still.
+**What is not scored: the numeric score Juno produces.** Identical inputs move it a few points between runs, so grading it would measure noise and graders would disagree about a number neither of them can reproduce. Graders score the priority tag, the quoted clause and the evidence count, all of which hold still.
 
 ## Dimensions
 
@@ -146,5 +146,5 @@ The two hard gates are the failures nobody catches on their own. An item Juno sh
 - [x] The dimensions cover five different failures rather than five wordings of the same one.
 - [x] Sampling volume is derived from the product's actual run rate rather than borrowed from a larger product.
 - [x] Handoff behavior is scored in both directions, so refusing too often cannot hide as caution.
-- [x] What is deliberately not scored is named, with the reason.
+- [x] What is not scored is named, with the reason.
 - [x] Hard and soft gates are separated, and each hard gate is justified by the failure being invisible.

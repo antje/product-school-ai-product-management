@@ -11,9 +11,9 @@ Override rate 10% to 40%; median time to approval >=90s; staged batch expiry <5%
 - Active: the PM approves each item as drafted, edits it, or rejects it, and the edited value is recorded where it changed. A "not useful" control on the shortlist card captures the case where the whole run was noise.
 - Passive: median time from shortlist to approval, staged batch expiry (a batch not approved within four hours is discarded), and the override rate itself, which needs nobody to submit anything.
 
-**Accuracy is deliberately not one of the bars.** Juno emits a numeric score that moves a few points between runs on identical input, so a quoted accuracy figure would be a number nobody can act on. The three bars above are countable and each names its own fix.
+**Accuracy is not one of the bars.** This is where the 95% accuracy trap gets avoided. Juno emits a numeric score that moves a few points between runs on identical input, so a quoted accuracy figure would be a number nobody can act on, and the 5% it hides would be the fabricated citations that cost the most. The three bars above are countable and each names its own fix.
 
-The bands are two-sided on purpose. Below 10% override nobody is checking; above 40% Juno is not saving anyone time. A one-sided target rewards a copilot nobody corrects, which is this product's most likely failure and the one it is least equipped to notice.
+The bands are two-sided. Below 10% override nobody is checking; above 40% Juno is not saving anyone time. A one-sided target rewards a copilot nobody corrects, which is this product's most likely failure and the one it is least equipped to notice.
 
 Derivations. 10% is the committed target of fewer than one in ten ranked items reversed after the fact: overriding less often than that means errors are getting past the check rather than being caught by it. 40% is the point at which rewriting two drafts in five costs more than starting from a blank page. 90 seconds is four items at roughly 20 seconds of real reading each. 5% expiry is one shortlist in twenty going unread for four hours, where the trigger is selecting the wrong threads rather than the PM being busy.
 
@@ -26,6 +26,8 @@ Derivations. 10% is the committed target of fewer than one in ten ranked items r
 | Human | 06-evals/human-rubric.md · 2 graders + PM tiebreak per disagreement protocol · cadence: Weekly batch (graded Thursday) · owner: PM who owns #escalations sets the bar and resolves tiebreaks | - Every handoff, 100% - 10 drafted runs / week - Stratified by separate customers affected on the top item (3 single / 4 two-to-three / 3 four-plus) | >=4.0/5 on ranking correctness, citation grounding and handoff correctness; 0 items scored 1 on handoff correctness or access safety |
 
 **Clause fidelity is enforced twice, and the two are different things.** At runtime it is a guard: an item whose quoted clause does not appear verbatim in the strategy document is dropped before staging, so it never reaches the PM. In CI it is a gate: the full golden set must pass at 100% before a version ships. The gate stops a bad version, the guard stops a bad item on a good version, and a product needs both.
+
+**The four operational risk metrics, under Juno's names.** Blocked request rate is the handoff rate, watched daily and scored in both directions by the rubric so over-refusal cannot hide as caution. Hallucination rate is clause fidelity plus source resolution, held at 100% and 0. Human override rate is the 10% to 40% band above, and it is the one this product is most likely to fail quietly. Drift and latency are budget conformance against 6 calls, 45 seconds and 6,000 tokens, plus LLM-judge agreement against the last human round. The failure taxonomy the gates map onto lives in the PRD's failure-mode table and the AWSpec's, severity set by whether a person would notice without the eval.
 
 **Clause fidelity is the one binary metric to automate first.** It is a string match against a known document, so it needs no model and cannot itself hallucinate, and it protects the whole product claim: an item whose citation does not hold is indistinguishable from one whose citation does.
 

@@ -20,13 +20,15 @@
 
 The value here is augmentation rather than automation. Juno is not removing the ranking decision, it is removing the blank page the PM currently starts from, which is why a person still approves before anything publishes.
 
-**Explicitly avoiding:** Agent. The job splits cleanly in two. Drafting a ranking is reversible and costs a PM five minutes when it is wrong. Writing dates, moving people, or publishing to the live roadmap is a one-way door, and one bad autonomous call gives every sceptic permanent grounds to dismiss the system. The risk sits in the write action, not in the draft, so that is where the human stays.
+**Explicitly avoiding:** Agent. On the Jobs x Risk x Autonomy lens, the job splits cleanly in two. Drafting a ranking is reversible and costs a PM five minutes when it is wrong. Writing dates, moving people, or publishing to the live roadmap is a one-way door, and one bad autonomous call gives every sceptic permanent grounds to dismiss the system. The risk sits in the write action, not in the draft, so that is where the human stays.
 
 ## 4. Data & Model Approach
 
 **Approach:** ground with RAG over the RocketShip corpus: `#escalations` and `#support`, the ROCKET Jira project, and the Product workspace in Notion. Every ranked item points at the thread or ticket that justifies it.
 
 **Explicitly avoiding:** the fine-tuning shortcut. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so a fine-tuned model would still need retrieval underneath. It costs more, ships later, and hides its mistakes where retrieval shows them.
+
+**The 3x cost stress test.** At the ceiling Juno spends about 4.7 million tokens a month. Tripling the inference price triples that line, and it is still small against the six PM hours a month the review alone gives back, before counting any P0 caught early. The bet ladders to a value frame and survives the stress test, which is the whole definition of a boring killer rather than a fake-good.
 
 **When a bigger player copies this.** They will, and quickly, because the mechanism is not hard to build. What they cannot copy is the corpus: RocketShip's own escalations, tickets and decisions, plus the record of which past rankings held and which were reversed. A competitor starts that at zero and cannot buy it. The lead is not the retrieval pipeline, it is that ours cites our own arguments and theirs has none yet. It compounds every week we use it and decays if we stop, so the assets to defend are the corpus and the citation rule, not the model choice.
 

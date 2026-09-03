@@ -12,7 +12,7 @@ The user is that product manager. Juno's job is to turn the noise across Slack, 
 
 Juno drafts, the human decides. It produces a ranked backlog with the evidence attached, and the PM approves before anything is published. We split it that way because a wrong draft costs five minutes to correct, while a wrong entry on the live roadmap moves real work. The risk sits in publishing, so that is where the person stays.
 
-**Retrieval strategy: hybrid.** The knowledge splits into two kinds and each wants opposite handling.
+**Retrieval strategy: hybrid.** This is the context engineering decision: which data gets assembled around the prompt. The knowledge splits into two kinds and each wants opposite handling.
 
 The strategy document is short, changes about once a quarter, and only makes sense read whole. Its exclusion list is what lets Juno say no to something, and that list only works if the whole document is present. Chunk it, and a question about a crashing export would pull the reliability section and never see the list of things the company has decided not to do. Juno would then rank a cosmetic request as reasonable and look like it was working.
 
@@ -22,14 +22,25 @@ We are not adding autonomous tool use. Ranking needs Juno to find and order thin
 
 ## Retrieval requirements (RAG)
 
+The five architecture decision factors, answered for RocketShip. These are what pick RAG over long context alone.
+
+| Factor | RocketShip's answer | What it decides |
+|---|---|---|
+| Data freshness | Up to one hour stale is fine; the output is read weekly | Event-driven re-index, not real-time |
+| Corpus size | Thousands of threads and tickets, far past any context window | Index and retrieve, except the strategy document |
+| Query latency budget | p95 under 4 seconds per retrieval call | Top-K capped at 8, reranker on |
+| Update cadence | Write-heavy on tickets and threads | Re-index on change rather than on a schedule |
+| Privacy and tenancy | Per-team; contracts, revenue and private channels excluded | Scope enforced at index time, not filtered after |
+
+
 - **Sources:** RocketShip Q3 2026 Strategy One-Pager, the ranking authority, read whole and never chunked. Slack `#escalations` and `#support`, rolling 90 days. Jira ROCKET project, rolling 90 days. Notion Product workspace, current page versions only.
 - **Chunking / indexing:** By natural unit, not fixed windows. One Slack thread is one chunk, one Jira ticket is one chunk, with an 800 token cap and 100 token overlap for longer threads. The strategy document is exempt and passes whole. Reranking is on, ordering strategy document first, then most recent, then most distinct accounts.
 - **Grounding rule:** Every ranked item shows the priority tag, the source it came from, and the clause it relied on, quoted word for word. An item missing any of the three is a bug, not a low-confidence answer. Where the strategy and a ticket disagree, the strategy wins and Juno names the clause it followed.
 - **Freshness:** Event-driven, not on a schedule. The strategy document re-indexes when it is published, Slack when a thread opens or closes, Jira when a ticket is created or changes status, Notion when a page is published. Worst case, the index is one hour behind.
 
-**Why these sources and this window.** Retrieval is limited to the requesting team's own data and to threads and tickets linked to the backlog under review, so one team's escalations cannot inflate another team's ranking. Direct messages, private channels, contracts and revenue figures are left out on purpose. Juno already refuses to answer revenue questions, so keeping that data out of the index enforces a rule it already follows. The 90 day window is deliberate too: a priority argued on evidence older than a quarter is arguing about a product that has already moved on.
+**Why these sources and this window.** Retrieval is limited to the requesting team's own data and to threads and tickets linked to the backlog under review, so one team's escalations cannot inflate another team's ranking. Direct messages, private channels, contracts and revenue figures are excluded. Juno already refuses to answer revenue questions, so keeping that data out of the index enforces a rule it already follows. The 90 day window has a reason too: a priority argued on evidence older than a quarter is arguing about a product that has already moved on.
 
-**Why chunk by natural unit.** Splitting on a fixed word count would cut an escalation in half, leaving the complaint in one piece and its consequence in another. A rank that cites only half an argument is worse than no rank at all, because it looks sourced. Reranking is on so that the conflict rule has somewhere to run. Without it, an old Notion page can outrank the current strategy simply by using similar words.
+**Why chunk by natural unit, and why 800 with 100 overlap.** Splitting on a fixed word count would cut an escalation in half, leaving the complaint in one piece and its consequence in another. A rank that cites only half an argument is worse than no rank at all, because it looks sourced. The 800 token cap is about 600 words, the length of a complete escalation thread including its resolution; anything longer is the exception and gets split. It sits at the small end of the usual 500 to 1,500 range because Juno cites rather than summarizes, and a citation wants the precise passage over the surrounding context. The 100 token overlap is one or two sentences, enough that when a split does fall inside a thread, a complaint and its consequence still land in the same chunk. Reranking is on so that the conflict rule has somewhere to run. Without it, an old Notion page can outrank the current strategy just by using similar words.
 
 **Why hybrid search.** The PM asks two different kinds of question. One is conceptual: what evidence says this is a reliability problem? That needs meaning-based search, because nobody writes the phrase "reliability problem" in a support ticket. The other is exact: show me everything on ROCKET-4421, or everything Acme raised this month. That needs keyword search, because meaning-based search returns things that look like a ticket number rather than that ticket. Every rank needs both a theme and a receipt, so both run together.
 
@@ -52,7 +63,7 @@ We are not adding autonomous tool use. Ranking needs Juno to find and order thin
 
 **Why four seconds.** The output is reviewed in a 30 minute meeting covering about 40 items, so roughly 30 seconds of attention each. A four second wait is a small fraction of that and disappears into the reading. This is a batch review, not something someone types into and waits on, so a tighter target would cost money for a delay nobody feels.
 
-**Why a token ceiling.** Without one, adding a source raises the cost of every query and nobody notices until the bill arrives. The ceiling forces that to be a decision.
+**Why a token ceiling, and why 6,000.** Without one, adding a source raises the cost of every query and nobody notices until the bill arrives. The ceiling forces that to be a decision. The figure is set below the theoretical maximum: eight segments at the 800 token cap would be 6,400. A query that needs every segment at full length is retrieving whole threads rather than the relevant part of them, and it should be trimmed rather than paid for. Typical segments run 400 to 600 tokens, so eight of them plus the query fit inside 6,000 with room.
 
 **Why the tag and not the score.** In testing, the same transcript produced different alignment scores from one run to the next, 63 then 60 on one item and 10 then 0 on another, while the priority tag and the quoted clause stayed the same. A test written against an exact score would fail on a system that is working correctly.
 
@@ -66,11 +77,17 @@ We are not adding autonomous tool use. Ranking needs Juno to find and order thin
 | Sources that disagree | A ticket and the strategy imply different priorities and Juno silently picks one. | Reranking puts the strategy first. Where a real contradiction remains, Juno refuses and routes rather than choosing. |
 | Evidence from the wrong team | Another team's escalations lift an item in this team's ranking. | Retrieval is limited to the requesting team's data, enforced when the index is built rather than filtered afterwards. |
 
-**The refusal wording, exactly:**
+**The refusal wording:**
 
 > "Insufficient evidence to rank this item. I retrieved [n] sources and none of them are from the strategy document. To rank it I need [the specific missing thing]. Sending this to you for a manual call."
 
 **Why refuse rather than guess.** This protects the user, not the team that built it. A PM who is told what is missing can go and find it in a minute. A PM handed a confident rank built on nothing loses an argument in front of leadership and never trusts the tool again. Saying "I do not know" costs a minute. Guessing costs the product.
+
+### Prompt and eval requirements
+
+**Prompt requirements** are the system prompt in [`01-prompting/system-prompt.md`](../01-prompting/system-prompt.md): the refusal rules, the citation rule and the output schema this PRD assumes.
+
+**Eval plan** is specified in [`06-evals/`](../06-evals/). The one requirement this PRD imposes on it: assertions are on the priority tag and the quoted clause, never the numeric score, for the reason given under requirement 5.
 
 ## Out of scope
 

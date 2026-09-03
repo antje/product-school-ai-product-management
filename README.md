@@ -10,35 +10,51 @@ Repo: https://github.com/antje/product-school-ai-product-management
 
 This repo is my final project for the **AI Product Management Certification**. Each module's artifact lives in its own folder; this README is the dashboard and the pitch.
 
----
+## The bet in three layers
 
-## Status
+**Strategy.** RocketShip's roadmap is ranked by whoever posted last and loudest. The PM cannot produce the evidence behind a rank inside the meeting, so decisions get reversed the week after. Juno's job is risk mitigation: make every priority defensible, with the source attached.
 
-| Module | Deliverables | Done |
+**Mechanic.** The first three modules built the ranking engine for the weekly review. Module 4 moved it. By the time the weekly review happens the loudest thread has already won, so the same ranking logic now runs inside the `#escalations` thread at the moment a P0 forms, where the evidence is freshest and the decision is still open. That shift is the one deliberate change of course in this repo.
+
+**Implementation.** A rented frontier model grounded by RAG over RocketShip's own corpus, with the strategy document loaded whole so it can refuse. An agent that plans, calls tools and iterates, and executes nothing until a person approves. Three evaluation layers with hard gates on the failures nobody notices without them.
+
+## The numbers that define Juno
+
+Every figure below is derived in the file that owns it, not chosen.
+
+| Number | What it is | Derived from |
 |---|---|---|
-| M1 · Prompting | System prompt, Lovable prototype | Yes |
-| M2 · Strategy | Decision matrix, strategy one-pager | Yes |
-| M3 · RAG / AI PRD | AI PRD | Yes |
-| M4 · AI-Native UX | User flow, trust gaps | Yes |
-| M5 · Agentic Workflows | AWSpec, control panel | Yes |
-| M6 · Evals & Guardrails | Eval stack, human rubric | Yes |
+| 2h → 30 min | Weekly prioritization time | ~40 items at ~30s each to check against a cited source, plus discussion |
+| < 10% | Rankings reversed within a week | 10% of a 40-item backlog is four per quarter, about one a fortnight |
+| P0/P1 tag, or 5 msgs in 10 min | Trigger | Three people typing inside ten minutes is the shape of an incident; one reply is a question |
+| Top-K 8 | Segments retrieved per item | Two or three segments establish a customer count; the top three items need about eight |
+| 4s p95 / 45s | Per retrieval call / whole run | Four seconds vanishes inside a 30s-per-item review; the loop is several calls plus reasoning |
+| 6 tool calls | Loop ceiling | A triage still circling after six has hit a dead end, not a hard problem |
+| 100% / 0 | Clause fidelity / out-of-scope sources | The two failures that look identical to correct output, so zero tolerance |
+| 10% to 40% | Override rate, two-sided | Below 10% nobody is checking; above 40% Juno is not saving time |
+| ≥ 4.0 / 5 | Human rubric pass bar | Below 4.0 the sample is producing rankings that will not survive the week |
+| ~4.7M tokens / month | Cost ceiling | ~110 runs at ~41k tokens in; held against six PM hours a month returned |
 
 ---
 
 ## Module artifacts
 
 ### M1 · Prompting
+Juno's job description as configuration: one job, named sources, nine rules and six refusals, a fixed output schema, and a worked example of the hardest case. Every rule traces to a specific failure the prototype produced, which is the argument for the pair. The prototype itself turned out to have no model behind it, byte-identical output on repeated runs, and that finding shaped how everything after it was tested.
 - **System prompt**: [`01-prompting/system-prompt.md`](01-prompting/system-prompt.md)
 - **Lovable prototype**: [`01-prompting/lovable-prototype.md`](01-prompting/lovable-prototype.md) · live at [ai-pm-synthesis.lovable.app](https://ai-pm-synthesis.lovable.app)
 
 ### M2 · Strategy
+Build the evidence layer, rent the model. All three options rent a base model, so the real decision is where engineering effort goes, and the axis that decides it is provenance rather than cost. Autonomy stays at Copilot because the risk sits in the write action, not the draft. The scariest risk is Juno laundering opinion into evidence, mitigated by ranking on distinct customers affected rather than message volume.
 - **Decision matrix**: [`02-strategy/decision-matrix.md`](02-strategy/decision-matrix.md)
 - **AI Strategy one-pager**: [`02-strategy/strategy-one-pager.md`](02-strategy/strategy-one-pager.md)
 
 ### M3 · RAG / AI PRD
+Hybrid retrieval, split two ways: the strategy document is read whole, because its exclusion list only works if all of it is present, and everything else is chunked by natural unit and retrieved at Top-K 8. Every rank shows a tag, a source and a quoted clause, or it fails the build. The finding that shaped the PRD: grounding did not change the order, it made refusal possible.
 - **AI PRD**: [`03-rag-prd/prd.md`](03-rag-prd/prd.md)
 
 ### M4 · AI-Native UX
+Slack-native, no new dashboard. A thread crossing a severity or velocity threshold fires the flow; one reply is posted and edited in place into the shortlist; every write is staged behind Approve, Edit and Reject. The three trust gaps are scored honestly, with control at 3 of 5 because Juno deliberately keeps no memory of which items a PM rejected, and the highest-priority fix respects that boundary rather than breaking it.
 - **AI user flow**: [`04-ai-ux/user-flow.md`](04-ai-ux/user-flow.md) · [flow diagram](04-ai-ux/user-flow.png)
 - **Trust-gap mitigations**: [`04-ai-ux/trust-gaps.md`](04-ai-ux/trust-gaps.md)
 - **Prototype screenshots**: quality mode ranks on request quality alone; strategy mode declines with a cited exclusion clause.
@@ -48,10 +64,12 @@ This repo is my final project for the **AI Product Management Certification**. E
 | ![Juno ranking without the strategy document](04-ai-ux/screenshots/juno-quality-mode.png) | ![Juno ranking grounded in the strategy document](04-ai-ux/screenshots/juno-strategy-mode.png) |
 
 ### M5 · Agentic Workflows
+The gated agent. Module 2 ruled out going agentic; this is the version that objection allowed, tools that compose writes and never execute them. Handoff fires on countable conditions rather than a model confidence score, because identical inputs move the score between runs. The control panel adds what the spec cannot: a human kill switch with a named holder, cost in tokens per month, fail-closed on provider outage, and monitoring of the approval checkpoint itself, since every guardrail ends at a person who will eventually stop reading.
 - **Agent Workflow Spec (AWSpec)**: [`05-agentic-workflows/awspec.md`](05-agentic-workflows/awspec.md) · [workflow diagram](05-agentic-workflows/awspec.png)
 - **Agent Control Panel**: [`05-agentic-workflows/agent-control-panel.md`](05-agentic-workflows/agent-control-panel.md) · [control panel diagram](05-agentic-workflows/agent-control-panel.png)
 
 ### M6 · Evals & Guardrails
+Three layers, each with a numeric bar, a cadence and an owner. The human rubric scores five distinct failures with 25 observable anchors. The eval stack's bands are two-sided, because a copilot nobody corrects is the likeliest failure and the least visible. Hard gates are reserved for the failures nobody would notice without the eval: a fabricated citation, an out-of-scope source, a missed handoff. Accuracy is not a bar.
 - **Eval stack**: [`06-evals/eval-stack.md`](06-evals/eval-stack.md) · [stack diagram](06-evals/eval-stack.png)
 - **Human evaluation rubric**: [`06-evals/human-rubric.md`](06-evals/human-rubric.md)
 
@@ -71,6 +89,8 @@ This repo is my final project for the **AI Product Management Certification**. E
 - **Sprint 1, make the checks real.** Build clause fidelity and source resolution as blocking CI checks. Write the first 20 golden set cases, the 9 handoffs plus 11 drafted shortlists. Run one calibration round with 2 graders over 12 items and fix whichever anchors they read differently.
 - **Sprint 2, read-only in production.** Juno posts the shortlist into `#escalations` behind a flag and stages nothing. Measure trigger precision, the share of fired runs the PM says was worth firing. No write scope is granted until that number holds, because a wrong write costs more than a wrong suggestion.
 
+**Beyond two sprints: the other two pillars.** Juno's mandate is three jobs, and this repo builds one. Prioritize risks came first because it is the pillar where a wrong answer is visible fastest, in the thread, in front of the people arguing, and where the evidence corpus is already richest. Draft specs earns its place when the override rate has held inside the 10% to 40% band for a full quarter. The system prompt already knows how to draft a PRD when asked; earning its place means running unprompted and staged into Notion, the way the ranking now runs into the thread, and a spec is a larger write than a rank, so the same approval checkpoint has to be proven real before it carries more weight. Synthesize insights is last, not because it is hardest but because it is the pillar whose output nobody argues with in a room, so a wrong answer there stays wrong longest. Same lens each time: how visible is the failure, and how much does the write cost.
+
 ### What I watch (dashboards)
 - **Daily:** handoff rate, run discard rate (the thread moved on mid-run), missed refusal triggers.
 - **Weekly:** override rate, median time to approval, staged batch expiry, rubric mean per dimension.
@@ -83,7 +103,7 @@ This repo is my final project for the **AI Product Management Certification**. E
 - Any item scored 1 on access safety in the latest human round.
 - Any item scored 1 on handoff correctness in the latest human round.
 - More than 0 golden set cases newly failing against the previous release.
-- Override rate below 10% for a full week. That one is not a quality failure, it is the checkpoint quietly ceasing to exist, and it is the reason the other five stay meaningful.
+- Override rate below 10% for a full week. That one is not a quality failure. It means the approval checkpoint has stopped working, and the other five only hold while it does.
 
 ### Governance
 - **Compliance.** Contracts, revenue figures, direct messages and private channels are excluded when the index is built, not filtered after retrieval, so data Juno should not see never enters the corpus. Retrieval is scoped to the requesting team and the last 90 days.
@@ -96,40 +116,8 @@ This repo is my final project for the **AI Product Management Certification**. E
 ## Build Insights
 
 - **Friction point.** The first prototype looked finished and had no model behind it. I ran the same transcript twice in two separate browser sessions and got byte-identical output, which is not something a model does. After that I stopped trusting what the screen implied and checked what the thing actually did.
-- **Key learning.** Every guardrail I wrote ended in the same place: the PM approves. It took until the eval stack to notice that nothing was watching whether the PM still read what they were approving. A checkpoint that degrades quietly is worse than no checkpoint, because it keeps looking like a control long after it has stopped being one.
-- **Aha moment.** Quality mode could rank. Only strategy mode could decline. Grounding did not make the ranking smarter, it made refusal possible, and refusing is the thing a PM cannot do from memory in a meeting.
-
----
-
-## Repo structure
-
-```
-product-school-ai-product-management/
-├── README.md                          ← this dashboard + pitch
-├── juno-pm-cover.jpg                  ← title image
-├── 01-prompting/
-│   ├── system-prompt.md               ← M1: Juno's system prompt
-│   └── lovable-prototype.md           ← M1: prototype link + debrief
-├── 02-strategy/
-│   ├── decision-matrix.md             ← M2: build / buy / fine-tune / partner call
-│   └── strategy-one-pager.md          ← M2: AI strategy one-pager
-├── 03-rag-prd/
-│   └── prd.md                         ← M3: AI PRD with retrieval requirements
-├── 04-ai-ux/
-│   ├── user-flow.md                   ← M4: AI-native user flow
-│   ├── user-flow.png                  ← M4: flow diagram
-│   ├── trust-gaps.md                  ← M4: trust-gap mitigations
-│   └── screenshots/                   ← M4: prototype, quality vs strategy mode
-├── 05-agentic-workflows/
-│   ├── awspec.md                      ← M5: Agent Workflow Spec
-│   ├── awspec.png                      ← M5: workflow diagram
-│   ├── agent-control-panel.md          ← M5: Agent Control Panel
-│   └── agent-control-panel.png         ← M5: control panel diagram
-└── 06-evals/
-    ├── eval-stack.md                  ← M6: layered eval stack
-    ├── eval-stack.png                  ← M6: stack diagram
-    └── human-rubric.md                ← M6: human evaluation rubric
-```
+- **Key learning.** Every guardrail I wrote ended with the PM approving. I did not notice until the eval stack that nothing was watching whether the PM still read what they approved. A checkpoint that fades is worse than none, because it still looks like a control after it has stopped being one.
+- **Aha moment.** Quality mode could rank. Only strategy mode could decline. Grounding did not make the ranking smarter, it made refusal possible, and refusing is what a PM cannot do from memory in a meeting.
 
 ---
 

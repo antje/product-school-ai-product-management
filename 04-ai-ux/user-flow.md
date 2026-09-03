@@ -8,13 +8,15 @@
 
 **Signal type:** Threshold crossed.
 
-**Node 1 · Trigger, tip.** A thread in `#escalations` crosses one of two thresholds: severity, when it is tagged P0 or P1, or velocity, when it passes five messages within ten minutes. Either one fires the flow. Nobody opens Juno and nothing is pasted anywhere.
+This flow moves Juno's ranking out of the weekly review and into the thread where the argument starts. The bet has not changed: defensible prioritization, risk mitigation first. What changed is the mechanic. By the time the weekly review happens the loudest thread has already won, so the same ranking logic runs at the moment the evidence is freshest and the decision is still open.
+
+**Node 1 · Trigger, tip.** A thread in `#escalations` crosses one of two thresholds: severity, when it is tagged P0 or P1, or velocity, when it passes five messages within ten minutes. Either one fires the flow. This is an environmental signal in the invisible-UI sense: nobody opens Juno and nothing is pasted anywhere.
 
 Two thresholds rather than one because severity tags are unreliable. Real incidents get argued about before anyone remembers to tag them, so the velocity bar catches the ones the tag misses. A single message never fires anything, which keeps Juno out of ordinary conversation.
 
 **What they see instantly**
 
-One threaded reply from Juno, posted within a second: "Reading this thread. Strategy last read 2 hours ago." The timestamp leads deliberately, so anyone in the thread knows which version of the priorities is about to be applied before they see a rank.
+One threaded reply from Juno, posted within a second: "Reading this thread. Strategy last read 2 hours ago." The timestamp comes first so anyone in the thread knows which version of the priorities is about to be applied before they see a rank.
 
 That single message is then edited in place as the work progresses and becomes the shortlist itself. One message per thread, never a sequence, because a bot that posts four times turns the thread it is trying to help into the thread nobody can read.
 
@@ -24,7 +26,7 @@ That single message is then edited in place as the work progresses and becomes t
 
 Each step corresponds to real work finishing, never a timer. If retrieval is slow, the step showing is the step running. A breadcrumb that lies is worse than none, because it teaches the PM to ignore the panel.
 
-The whole sequence completes inside the four second retrieval budget, so the breadcrumbs read as progress rather than as an apology. Past four seconds the thread has moved on without Juno, which is the real deadline.
+The whole sequence runs inside a 45 second budget for the loop. Each retrieval call is held to four seconds at p95, but a run makes several calls plus the reasoning between them, and conflating the two budgets would either break the retrieval target or make the loop impossible. The real deadline is the thread moving on: if it gains more than ten new messages while the run is in flight, the run is discarded rather than surfaced, because a shortlist built on the first half of an argument gets read as a summary of all of it.
 
 **Node 2 · Capture, underwater.** Pull the thread, its participants, any linked Jira keys, and the customer accounts named in it. Also pull the last 90 days of threads touching those same accounts, so a recurring problem is visible as recurring.
 
@@ -61,6 +63,8 @@ And a shortlist card in the PM's Slack DM. Each row carries four things and noth
 
 Approve, Edit and Reject sit on the card, not behind a menu.
 
+The four-part row is built to the ship criterion that an output must be verifiable in under three seconds. Badge, one line, evidence count, quoted clause: a PM can check any rank against its source without opening anything.
+
 No new dashboard. A ranking that lives somewhere people have to visit is a ranking they will not read during the argument it was meant to settle.
 
 **Node 7 · Confirm / Correct, tip.** Approve executes the three staged writes. Edit changes a priority tag and asks for a one-line reason. Reject drops the item and asks why. Nothing writes to Jira or Notion until one of those three happens.
@@ -71,7 +75,7 @@ No new dashboard. A ranking that lives somewhere people have to visit is a ranki
 
 The value is augmentation rather than automation. The PM is not asking Juno to take the ranking away, only to stop building it from a blank page. So the output arrives inside the conversation that produced it, editable, rather than in a separate surface that would make reviewing feel like a second task.
 
-**On the prototype.** The working build is a four column dashboard with a paste box, and that is deliberate. It is a test harness for the reasoning, not the shipping surface. Pasting a transcript by hand is the fastest way to check whether the ranking and the citations are right. Once that logic is trusted, the same engine moves to where the arguments actually happen, which is the thread, not a tool someone has to remember to open.
+**On the prototype.** The working build is a four column dashboard with a paste box. It is a test harness for the reasoning, not the shipping surface. Pasting a transcript by hand is the fastest way to check whether the ranking and the citations are right. Once that logic is trusted, the same engine moves to where the arguments actually happen, which is the thread, not a tool someone has to remember to open.
 
 **Where the AI acts and what it shows.** Juno ranks and states the clause behind each position. The tag is what the PM acts on; the score is shown as an indicator, never as the claim, for the reason given at the Reason node.
 
@@ -97,7 +101,7 @@ Every edit and rejection is logged with its one-line reason. An override within 
 
 *Sources disagree.* Where a ticket and the strategy imply different priorities and reordering cannot settle it, Juno refuses and asks rather than choosing quietly. A silent pick is the worst failure here, because nothing on screen shows a judgment was made.
 
-*No strategy document available.* Juno still ranks, on how well each request is put together rather than on what the company has decided. The whole card gets an amber header reading "Cautious mode, no strategy loaded" and every traceability footer is replaced with a prompt to load the document. Without the strategy the order can still be right, but the ability to decline anything is gone, and the card should look different enough that nobody mistakes one mode for the other.
+*No strategy document available.* The run does not start. The status reply is edited to one line, "Strategy document unavailable, no ranking produced", and the PM is told by DM. Every rank has to quote a clause, so a ranking built without the document would be an ordering with nothing behind it that looks exactly like a sourced one. The prototype's quality-only mode showed the order can be right without the strategy, but the ability to decline is gone, and a rank that cannot decline is the failure this product exists to remove.
 
 *Retrieval or the model is unavailable.* Juno posts nothing rather than posting a guess, and tells the PM by DM that it skipped the thread. Silence in a channel is recoverable; a confident wrong ranking in front of the people arguing is not.
 
