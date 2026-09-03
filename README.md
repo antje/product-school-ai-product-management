@@ -18,6 +18,16 @@ This repo is my final project for the **AI Product Management Certification**. E
 
 **Implementation.** A rented frontier model grounded by RAG over RocketShip's own corpus, with the strategy document loaded whole so it can refuse. An agent that plans, calls tools and iterates, and executes nothing until a person approves. Three evaluation layers with hard gates on the failures nobody notices without them.
 
+## The ask and the return
+
+| | |
+|---|---|
+| **Ask** | One engineer for two sprints, plus the PM's own time. Sprint 1 builds the two blocking checks and the first 20 golden cases. Sprint 2 ships read-only into `#escalations`. Owner: the PM who owns the channel. The engineering estimate is the first number to confirm; the decision matrix flags it as an assumption rather than a quote. |
+| **Run cost** | About 4.7M tokens a month at the ceiling. At a blended $5 per million tokens that is under $25 a month, and under $75 if the price triples. Assumption, to confirm against the provider contract. |
+| **Return, priced** | Six PM hours a month from the review alone. Plus reversals: several a week today, under four a quarter at target, so roughly 25 avoided per quarter. If one in five reversals means an engineer started on the wrong item for a week, that is about five engineer-weeks a quarter recovered. Assumption stated, not measured. |
+| **Return, not priced** | The value of a P0 caught a day earlier. It depends on ARR and contract exposure, which Juno is built not to see, so this document does not estimate it either. The reversal figure carries the case on its own. |
+| **Kill** | Reversal rate flat while review time drops. That means provenance was never the constraint, and the cheaper ungrounded option was right all along. |
+
 ## The numbers that define Juno
 
 Every figure below is derived in the file that owns it, not chosen.
@@ -83,7 +93,7 @@ Three layers, each with a numeric bar, a cadence and an owner. The human rubric 
 - The agent is a specification. No tool call has run against live Slack, Jira or Notion.
 - Golden set: 40 cases composed and allocated across handoff conditions and routing paths. None written yet.
 - Human rubric: five dimensions, 25 anchors, pass bars set. No calibration round run, graders not staffed.
-- Nothing is wired to CI.
+- Nothing is wired to CI. Closing that gap is the two-sprint ask above.
 
 ### What ships next (next 2 sprints)
 - **Sprint 1, make the checks real.** Build clause fidelity and source resolution as blocking CI checks. Write the first 20 golden set cases, the 9 handoffs plus 11 drafted shortlists. Run one calibration round with 2 graders over 12 items and fix whichever anchors they read differently.
@@ -115,9 +125,9 @@ Three layers, each with a numeric bar, a cadence and an owner. The human rubric 
 
 ## Build Insights
 
-- **Friction point.** The first prototype looked finished and had no model behind it. I ran the same transcript twice in two separate browser sessions and got byte-identical output, which is not something a model does. After that I stopped trusting what the screen implied and checked what the thing actually did.
-- **Key learning.** Every guardrail I wrote ended with the PM approving. I did not notice until the eval stack that nothing was watching whether the PM still read what they approved. A checkpoint that fades is worse than none, because it still looks like a control after it has stopped being one.
-- **Aha moment.** Quality mode could rank. Only strategy mode could decline. Grounding did not make the ranking smarter, it made refusal possible, and refusing is what a PM cannot do from memory in a meeting.
+- **Friction point.** I built Juno for the weekly prioritization review for three modules, then saw in the user flow that the review is where the argument has already been lost. The same ranking logic had to move into the `#escalations` thread, at the moment a P0 forms. That is the mechanic layer of the three-layer model, the one most PMs get wrong, and I got it wrong first. Admitting it cost more than any technical decision in this repo.
+- **Key learning.** Convincing output is the failure mode, not the success signal. The first prototype looked finished and produced byte-identical output on two runs, so it had no model behind it. Later, every guardrail I wrote ended with the PM approving, and nothing checked whether the PM still read. Both times, what looked like control was not. Evals exist because working and convincing are indistinguishable from the outside.
+- **Aha moment.** Quality mode could rank. Only strategy mode could decline. Grounding did not make Juno better at ordering evidence; it gave it the ability to say no and quote the clause. That is the one thing a PM cannot do from memory in front of leadership, and it turned Juno from a ranking tool into a refusal tool. Every hard gate in the eval stack follows from it.
 
 ---
 

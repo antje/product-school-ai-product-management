@@ -32,7 +32,7 @@ The axis that decides this is not the one the scores make loudest. Cost and Spee
 
 **Buy / API** is tempting on a budget with no headcount. It fails on provenance. An ungrounded model ranking a backlog produces confident output with nothing behind it, which is the loudest-voice problem again in better prose. The first prototype showed this exact failure: it wrote a fluent brief that never named what was broken, and it was convincing precisely because it was fluent.
 
-**Fine-tune** scores worst. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so it would still need the retrieval layer underneath. It is the Build cost plus a labeling programme, and it hides its mistakes instead of showing them.
+**Fine-tune** scores worst. There is no labelled ranking data at RocketShip, priorities shift faster than labels could be refreshed, and weights cannot cite anything, so it would still need the retrieval layer underneath. It is the Build cost plus a labeling program, and it hides its mistakes instead of showing them.
 
 ## Recommendation
 
