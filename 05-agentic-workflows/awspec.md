@@ -53,6 +53,7 @@ Planner-Executor becomes the right choice if this ever runs across every escalat
 | 2 | Load the strategy document whole and retrieve the top 8 corpus segments per candidate item, then rerank strategy first | `strategy.load`, `corpus.retrieve` | Every chunk returns a source and a timestamp, or it cannot be cited |
 | 3 | Score each item against the strategy and count separate customers affected | `accounts.count` | Message volume is ignored, so one account raising an issue twelve times counts once |
 | 4 | Draft the shortlist: priority tag, quoted clause, evidence count per item | model only | No item is drafted without a clause to quote |
+| 4b | Verify every quoted clause against the loaded strategy document before staging | `strategy.load` result, string match | An item whose clause does not appear verbatim is dropped from the shortlist and logged. If it was the top item, the run refuses rather than reordering around it |
 | 5 | Stage three writes and request approval | `slack.stage_reply`, `jira.stage_priority`, `notion.stage_row` | Staged only. Nothing executes without approval |
 
 **Tool inventory**
@@ -130,6 +131,10 @@ Two errors rather than one, because a single failure is usually a timeout worth 
 **What the thread sees while a run is in flight.** Nothing. The 45 seconds are silent on purpose, because a placeholder posted into a thread where people are already arguing adds noise to the thing it is trying to settle.
 
 If the thread gains more than ten new messages during a run, the run is discarded rather than surfaced. A shortlist built on the first half of an argument will be read as a summary of all of it, and being confidently out of date is the failure this whole design is trying to avoid.
+
+**Clause verification runs before staging, not only in review.** The strategy document is already loaded whole, so checking that each quoted clause appears in it verbatim is a string match with no extra call and no model. An item that fails is dropped and logged; if the failing item was ranked top, the run refuses rather than promoting the second item, because the ranking that produced it is no longer trustworthy.
+
+Doing this at review time only would be too late. A fabricated clause is indistinguishable from a real one on the page, so by the time a nightly job finds it the PM has already read it and may have quoted it onward.
 
 **Fails safe by** staging every write rather than executing it. A wrong ranking costs one rejection and leaves no trace in the systems of record. If a tool fails, the run stops and says so rather than substituting a guess, because a plausible rank built on a failed retrieval is indistinguishable from a sourced one once it is in the list.
 

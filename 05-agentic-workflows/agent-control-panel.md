@@ -54,6 +54,8 @@ The reason to write it as tokens a month rather than tokens a query is that this
 
 Structured outputs are the guardrail against invention. A chunk without a source cannot be cited, and an item without a citation never gets drafted. If a tool did not return it, there is nothing to quote.
 
+**Juno cannot stage an item whose quoted clause does not appear verbatim in the strategy document.** The check runs inside the loop, before staging, against the document already held whole. A failing item is dropped and logged; if it was ranked top, the run refuses. Catching this in the nightly eval instead would mean catching it after the PM has read it.
+
 Only `corpus.retrieve` carries a relevance score, because it is the only tool that ranks anything. `strategy.load` returns the document whole and unranked, so there is nothing to order. `slack.read_thread` and `accounts.count` return facts rather than matches, and a score on a fact would invite someone to threshold on it.
 
 ```
