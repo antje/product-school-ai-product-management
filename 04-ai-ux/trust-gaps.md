@@ -50,12 +50,3 @@ The fix has to respect the memory boundary rather than break it. Storing "this a
 30 days, because the strategy document is revised quarterly. A rejection older than half a cycle may rest on an exclusion that has since changed, and re-raising the item then is legitimate rather than repetitive.
 
 That closes the gap the PM actually feels, which is not being ignored, without teaching Juno an opinion about who complains loudest. The ranking stays evidence-based. The PM stops repeating themselves.
-
-## Self-review
-
-- [x] All three gaps scored, with the mitigation named for each.
-- [x] The intelligence tax has its own row, with a latency figure, a streaming decision, and a stated in-flight surface.
-- [x] Value frames are mapped to UX treatments, and the unused frames are named with reasons.
-- [x] Each gap says what is still open, not only what is closed.
-- [x] The highest-priority fix names one gap and gives the reason it ranks first.
-- [x] The proposed fix is consistent with the memory boundaries already committed.

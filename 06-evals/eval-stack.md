@@ -65,23 +65,3 @@ Asserting on the score would produce a suite that fails at random and gets muted
 Hard and soft split on one question: would anyone notice this failure without the eval telling them? A fabricated citation, an out-of-scope source and a missed handoff all look exactly like correct output. Latency and a weak ranking announce themselves, so a person can weigh them.
 
 When a gate fails, pull the levers in order: prompt, then model, then data. Architecture last. Most of what this stack catches is an instruction failure, and rebuilding retrieval to fix a prompt problem is the slowest way to find that out.
-
-## Self-review
-
-- [x] All three layers have signals/checks specified.
-- [x] Each layer has a numeric pass bar.
-- [x] Each layer has a cadence.
-- [x] Each layer names who acts on it.
-- [x] Layer 2 references the human-rubric.md file.
-- [x] Layer 3 has a versioned golden set.
-- [x] At least one hard gate is defined.
-
-**Also checked**
-
-- [x] The user-feedback layer names one active mechanism and three passive ones.
-- [x] One binary metric is named as the first to automate, with the reason it is that one.
-- [x] The rubric's dimensions are referenced, never restated or modified.
-- [x] Golden set assertions avoid the numeric score, because it moves between runs on identical input.
-- [x] Every threshold is derived, including both ends of the two-sided bands.
-- [x] Hard and soft gates are separated by one stated rule: whether the failure is visible without the eval.
-- [x] The LLM-judge layer states what only it can catch, rather than repeating the code-based checks.

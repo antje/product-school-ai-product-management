@@ -130,21 +130,3 @@ Two points, because adjacent scores are ordinary judgment and always will be. A 
 A sample averaging below 4.0 is producing rankings that will not survive the week, which puts the reversal target out of reach before anyone has seen a reversal. 3.5 on defensibility is set lower because a 5 there depends on how the PM ran the thread, not only on what Juno produced.
 
 The two hard gates are the failures nobody catches on their own. An item Juno should have handed back and instead ranked looks exactly like one it ranked correctly. Excluded data in an output cannot be un-seen. Everything else degrades visibly, so a PM can weigh it and decide.
-
-## Self-review
-
-- [x] 3-5 dimensions defined.
-- [x] Each dimension has all 5 anchor descriptions.
-- [x] Anchors are observable, not subjective adjectives.
-- [x] Sampling rule + cadence specified.
-- [x] Disagreement protocol with numeric trigger.
-- [x] Pass bar is numeric (not "looks good").
-
-**Also checked**
-
-- [x] A stranger can tell a 3 from a 4 on every dimension, because each step names a different observable state rather than a stronger version of the last one.
-- [x] The dimensions cover five different failures rather than five wordings of the same one.
-- [x] Sampling volume is derived from the product's actual run rate rather than borrowed from a larger product.
-- [x] Handoff behavior is scored in both directions, so refusing too often cannot hide as caution.
-- [x] What is not scored is named, with the reason.
-- [x] Hard and soft gates are separated, and each hard gate is justified by the failure being invisible.

@@ -160,26 +160,3 @@ After approval: what the PM did with each item. Approved as drafted, edited, or 
 The scores are not logged as a result. Identical inputs move them a few points between runs, so a log of scores would measure noise. The tag, the cited clause and the account count hold still, which makes them checkable. The PM's edit is the only ground truth this product gets, and it arrives for free every time someone approves a shortlist, so capture it from the first run rather than fitting it later.
 
 **The trade-off being made:** accuracy bought at the cost of latency. Loading the strategy whole, retrieving eight segments, reranking, then counting distinct customers all add time. A triage that takes 45 seconds and cites its sources is worth more than one that answers in five and cannot be defended, because the whole point is surviving the argument in the thread.
-
-## Self-review
-
-- [x] Goal is one sentence and names the value frame.
-- [x] Trigger is a precise, testable condition.
-- [x] Pattern is chosen with a defensible reason.
-- [x] At least 3 stop conditions, including escalation.
-- [x] Each memory type named (in or out).
-- [x] Every tool lists scope (read-only vs write) and a schema.
-- [x] Read/write boundaries match the AI PRD.
-
-**Also checked**
-
-- [x] The value frame is ordered rather than listed: risk mitigation first, cost reduction second, with the time saving derived from the work it replaces.
-- [x] Both trigger thresholds are derived, and the reason for two rather than one is stated.
-- [x] The rejected pattern is named along with the condition that would make it the right choice.
-- [x] Stop conditions go past the three required: success, failure, escalation, a loop ceiling and a timeout, each with the reason for its number.
-- [x] Semantic memory names what is out of scope, not only what is kept, and the rules it does keep are versioned.
-- [x] Inputs name the context a run requires, and what happens when a required input is missing.
-- [x] Eval hooks name what every run logs, and why scores are not among the logged results.
-- [x] The failure table covers all five named failure modes plus provider outage, and the model tier is named as an input rather than buried in the prompt.
-- [x] The latency budget has a user-facing contract: what the thread sees during a run, and what happens when the thread moves on mid-run.
-- [x] The trade-off being accepted is stated outright rather than left implicit.

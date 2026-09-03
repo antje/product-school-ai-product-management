@@ -106,13 +106,3 @@ Every edit and rejection is logged with its one-line reason. An override within 
 *Retrieval or the model is unavailable.* Juno posts nothing rather than posting a guess, and tells the PM by DM that it skipped the thread. Silence in a channel is recoverable; a confident wrong ranking in front of the people arguing is not.
 
 *The strategy changed but the index has not caught up.* Every ranking carries the strategy's last-read time, and Juno says so explicitly when that is older than the document. A confident refusal based on last quarter's exclusions is the most expensive failure here and the least visible.
-
-## Self-review
-
-- [x] Trigger is a real signal: a P0/P1 tag or five messages in ten minutes in `#escalations`, not "user opens app".
-- [x] All seven nodes have one specific line each.
-- [x] Tip versus underwater is marked on every node.
-- [x] The Act node names specific tool calls: Slack threaded reply, Jira `juno-priority` field and comment, Notion weekly page row.
-- [x] The Surface node names where: the `#escalations` thread and the PM's Slack DM.
-- [x] At least one breadcrumb turns latency into transparency.
-- [x] Every automated decision has a kill switch, and no write executes before approval.

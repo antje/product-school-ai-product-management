@@ -143,24 +143,3 @@ The three standing rules are the product. Editing one changes what Juno believes
 - A change is reversible in one step, and the previous version stays available until the new one has run for a week.
 
 **Nobody can change a ranking rule silently.** Drift is the failure this prevents, and drift in the rules is harder to spot than drift in the data, because the output reads exactly as well either way.
-
-## Self-review
-
-- [x] Stop conditions include max_steps + wall-clock timeout.
-- [x] Tool outputs include a confidence/score field per retrieval tool.
-- [x] Confidence thresholds map to actions, not just labels.
-- [x] North Star is one sentence, re-read every loop.
-- [x] Each rule of engagement names something the agent CANNOT do.
-
-**Also checked**
-
-- [x] All four levers and all four rules are numbered, so each one is countable on the page.
-- [x] Every lever is a number or a sentence that could be built tomorrow, not a vibe.
-- [x] The North Star is the goal sentence from the workflow spec, word for word, and the three standing rules sit beside it rather than inside it.
-- [x] The confidence thresholds are the same three handoff conditions the workflow spec names.
-- [x] Stop conditions include a human override, with the holder named rather than left to whoever notices.
-- [x] Every step is placed in a decision mode, and the mode is justified.
-- [x] Cost is capped in money terms, derived from run volume, not only in tokens per query.
-- [x] The model tier is named, and provider failure fails closed rather than downgrading.
-- [x] The health of the human checkpoint is itself monitored, with two thresholds and an action for each.
-- [x] Staged writes expire, and the ranking rules are versioned with a named owner.
