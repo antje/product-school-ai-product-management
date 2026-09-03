@@ -7,6 +7,7 @@
 _Antje Barth · AI Product Management Certification · Aug 2026 cohort_
 
 Repo: https://github.com/antje/product-school-ai-product-management
+Presentation: https://antje.github.io/product-school-ai-product-management/pitch.html
 
 This repo is my final project for the **AI Product Management Certification**. Each module's artifact lives in its own folder; this README is the dashboard and the pitch.
 
